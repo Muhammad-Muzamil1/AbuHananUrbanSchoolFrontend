@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Root Variables */
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --secondary-light: #22d3ee;
+            --secondary-dark: #0891b2;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition-speed: 0.3s;
+            --font-family: 'Poppins', sans-serif;
+            --border-radius: 12px;
+        }
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Layout Fix */
+        body {
+            font-family: var(--font-family);
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--light);
+            color: var(--dark);
+            transition: background-color var(--transition-speed);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                    radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.03) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.03) 0%, transparent 20%),
+                    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 30%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        /* Sidebar Fix */
+        .sidebar {
+            width: 300px;
+            position: fixed;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+            padding: 30px 0;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .sidebar h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            padding: 0 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        /* Sidebar Links */
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar .dropbtn {
+            background: transparent;
+            color: white;
+            padding: 15px 25px;
+            margin-bottom: 15px;
+            border: none;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .dropbtn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar .dropbtn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .sidebar .dropbtn:hover::before {
+            left: 100%;
+        }
+
+        .sidebar .dropbtn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar .dropbtn:hover i {
+            transform: scale(1.2);
+        }
+
+        /* Dropdown Content */
+        .sidebar .dropdown-content {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 10px 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .sidebar .dropdown-content button {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            width: 100%;
+            background: transparent;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar .dropdown-content button i {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .sidebar .dropdown-content button:hover {
+            background: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .sidebar .dropdown-content button:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Content Area */
+        #contentSpace {
+            flex-grow: 1;
+            padding: 40px;
+            margin-left: 300px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: calc(100% - 300px);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        h1:hover::after {
+            width: 100%;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 700px;
+            margin: 30px auto;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        form h2 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        form h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        form h2:hover::after {
+            width: 100px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--light);
+            color: var(--dark);
+            font-family: var(--font-family);
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: -15px;
+            margin-bottom: 15px;
+        }
+
+        /* Buttons */
+        button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+        }
+
+        button:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            padding: 0 20px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(to right, var(--danger), var(--danger-light));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(to right, var(--danger-light), var(--danger));
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        th {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            margin: 10% auto;
+            width: 80%;
+            max-width: 700px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.4s ease-in-out;
+            position: relative;
+        }
+
+        /* Close Button */
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--gray);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            color: var(--dark);
+            background-color: var(--gray-light);
+        }
+
+        /* Fee Details Styling */
+        #feeDetails {
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #feeTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            animation: slideIn 0.4s ease-in-out;
+        }
+
+        #feeTable th,
+        #feeTable td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-light);
+            font-family: var(--font-family);
+            transition: background-color 0.3s ease;
+        }
+
+        #feeTable tbody tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+            cursor: pointer;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #feeTable thead {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination button:disabled {
+            background: var(--gray-light);
+            color: var(--gray);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        #pageInfo {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        /* Faculty Details Styling */
+        #facultyDetails table {
+            font-family: var(--font-family);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+
+        #facultyDetails th, #facultyDetails td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        #facultyDetails th {
+            background-color: var(--primary-light);
+            color: white;
+            width: 200px;
+            font-weight: 500;
+        }
+
+        #facultyDetails tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        /* Message Area Container */
+        .message-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease-in-out;
+            transition: all var(--transition-speed);
+            margin-top: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .message-area:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Textarea Box */
+        .message-box {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--gray-light);
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            font-family: var(--font-family);
+        }
+
+        .message-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Send Button */
+        .send-button {
+            align-self: flex-end;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 500;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 350px;
+        }
+
+        .toast-message {
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-family);
+            animation: slideInRight 0.3s forwards;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-message .close-btn {
+            margin-left: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast-message .close-btn:hover {
+            opacity: 1;
+        }
+
+        .toast-message.info {
+            background: linear-gradient(to right, var(--info), #60a5fa);
+        }
+
+        .toast-message.success {
+            background: linear-gradient(to right, var(--success), var(--success-light));
+        }
+
+        .toast-message.error {
+            background: linear-gradient(to right, var(--danger), var(--danger-light));
+        }
+
+        .toast-message.warning {
+            background: linear-gradient(to right, var(--warning), #fbbf24);
+        }
+
+        /* Card Styling */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .welcome-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .welcome-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .welcome-card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 30px;
+        }
+
+        .welcome-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .welcome-card-text {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-60px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 280px;
+            }
+            #contentSpace {
+                margin-left: 280px;
+                max-width: calc(100% - 280px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+            }
+            #contentSpace {
+                margin-left: 250px;
+                max-width: calc(100% - 250px);
+                padding: 30px;
+            }
+            form {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 1000;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            #contentSpace {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 20px;
+                padding-top: 80px;
+            }
+
+            .welcome-cards {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            .auth-buttons {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #contentSpace {
+                padding: 15px;
+                padding-top: 70px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            form {
+                padding: 15px;
+            }
+
+            input, select, button {
+                font-size: 0.95rem;
+                padding: 10px 15px;
+            }
+
+            .toast-container {
+                max-width: 300px;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+
+        .sidebar .dropdown {
+            position: relative;
+        }
+
+        .sidebar .dropdown-content {
+            display: none;
+            position: relative;
+            margin-top: 5px;
+            margin-left: 20px;
+            z-index: 10;
+        }
+
+        .sidebar .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!-- Mobile menu toggle button -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+    <h1><i class="fas fa-school"></i> School Management</h1>
+    <ul>
+        <li class="dropdown">
+            <a href="#" class="dropbtn"><i class="fas fa-user-graduate"></i> Student Management</a>
+            <div class="dropdown-content">
+                <button onclick="renderAddStudentForm()"><i class="fas fa-plus"></i> Add Student</button>
+                <button onclick="renderUpdateStudentForm()"><i class="fas fa-edit"></i> Update Student</button>
+                <button onclick="renderDeleteStudentForm()"><i class="fas fa-trash-alt"></i> Delete Student</button>
+                <button onclick="getSpecificStudent()"><i class="fas fa-search"></i> Get Specific Student</button>
+                <button onclick="renderGetSpecificFee()"><i class="fas fa-money-bill-wave"></i> Get Fees Detail</button>
+                <button onclick="setupSendMessageUI()"><i class="fas fa-envelope"></i> Send Message</button>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn"><i class="fas fa-chalkboard-teacher"></i> Faculty Management</a>
+            <div class="dropdown-content">
+                <button onclick="renderAddFacultyForm()"><i class="fas fa-plus"></i> Add Faculty</button>
+                <button onclick="renderUpdateFacultyForm()"><i class="fas fa-edit"></i> Update Faculty</button>
+                <button onclick="renderDeleteFacultyForm()"><i class="fas fa-trash-alt"></i> Delete Faculty</button>
+                <button onclick="getSpecificFaculty()"><i class="fas fa-search"></i> Get Faculty</button>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn"><i class="fas fa-calendar-check"></i> Attendance Management</a>
+            <div class="dropdown-content">
+                <button onclick="renderGetSpecificAttendance()"><i class="fas fa-clipboard-list"></i> Get Attendance of Student</button>
+                <button onclick="getLowAttendanceStudents()"><i class="fas fa-exclamation-triangle"></i> Get Students with Low Attendance</button>
+            </div>
+        </li>
+    </ul>
+    <div class="auth-buttons">
+        <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</div>
+
+<div id="contentSpace">
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome to School Management System</h1>
+        <p class="welcome-subtitle">A comprehensive platform to manage students, faculty, attendance, and more. Select an option from the sidebar to get started.</p>
+
+        <div class="welcome-cards">
+            <div class="welcome-card">
+                <div class="welcome-card-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3 class="welcome-card-title">Student Management</h3>
+                <p class="welcome-card-text">Add, update, delete and view student information, fees, and send messages.</p>
+            </div>
+
+            <div class="welcome-card">
+                <div class="welcome-card-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="welcome-card-title">Faculty Management</h3>
+                <p class="welcome-card-text">Manage faculty members, their roles, and personal information.</p>
+            </div>
+
+            <div class="welcome-card">
+                <div class="welcome-card-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="welcome-card-title">Attendance Tracking</h3>
+                <p class="welcome-card-text">Monitor student attendance and identify students with low attendance.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    // Mobile menu toggle
+    document.getElementById("mobileMenuToggle").addEventListener("click", function() {
+        document.getElementById("sidebar").classList.toggle("active");
+        this.innerHTML = document.getElementById("sidebar").classList.contains("active")
+            ? '<i class="fas fa-times"></i>'
+            : '<i class="fas fa-bars"></i>';
+    });
+
+    // Utility Functions
+    const apiCall = async (url, method, data = null) => {
+        const token = sessionStorage.getItem("jwtToken");
+        if(!token){
+            displayMessage("No user logged in. Please login first.", "error");
+            setTimeout(() => {
+                window.location.href = "/index.html";
+            }, 2000);
+        }
+        else{
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            };
+            const options = {
+                method,
+                headers,
+                ...(data && { body: JSON.stringify(data) })
+            };
+            try {
+                const response = await fetch(url, options);
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return method === 'DELETE' ? response.text() : response.json();
+            } catch (error) {
+                throw error;
+            }
+        }
+    };
+
+    const showError = (elementId, message) => {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+            errorElement.textContent = message;
+        }
+    };
+
+    const clearErrors = () => {
+        document.querySelectorAll(".error-message").forEach(element => {
+            element.textContent = "";
+        });
+    };
+
+    const validateInput = (value, regex, errorElementId, errorMessage) => {
+        if (!regex.test(value)) {
+            showError(errorElementId, errorMessage);
+            return false;
+        }
+        return true;
+    };
+
+    const displayMessage = (message, type = "info") => {
+        // Create toast container if not exists
+        let toastContainer = document.querySelector(".toast-container");
+        if (!toastContainer) {
+            toastContainer = document.createElement("div");
+            toastContainer.className = "toast-container";
+            document.body.appendChild(toastContainer);
+        }
+
+        // Create the message div
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `toast-message ${type}`;
+
+        // Add icon based on type
+        let icon = '';
+        if (type === 'success') {
+            icon = '<i class="fas fa-check-circle"></i>';
+        } else if (type === 'error') {
+            icon = '<i class="fas fa-exclamation-circle"></i>';
+        } else if (type === 'warning') {
+            icon = '<i class="fas fa-exclamation-triangle"></i>';
+        } else {
+            icon = '<i class="fas fa-info-circle"></i>';
+        }
+
+        messageDiv.innerHTML = `<span>${icon} ${message}</span><span class="close-btn">&times;</span>`;
+
+        // Close button handler
+        messageDiv.querySelector(".close-btn").addEventListener("click", () => {
+            messageDiv.style.animation = "slideOutRight 0.3s forwards";
+            setTimeout(() => messageDiv.remove(), 300);
+        });
+
+        // Append and animate
+        toastContainer.appendChild(messageDiv);
+        setTimeout(() => messageDiv.classList.add("show"), 100);
+
+        // Auto-remove after 5s
+        setTimeout(() => {
+            messageDiv.style.animation = "slideOutRight 0.3s forwards";
+            setTimeout(() => messageDiv.remove(), 300);
+        }, 5000);
+    };
+
+    function clearForm(formId) {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.reset(); // Reset all input fields
+        }
+    }
+
+    // Student Management Functions
+    function renderAddStudentForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Add Student</h1>
+        <form id="addStudentForm">
+            <div class="form-group">
+                <label for="rollNo">Roll No (4 digits):</label>
+                <input type="text" id="rollNo" name="rollNo" maxlength="4" required>
+                <div id="rollNoError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <div id="usernameError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password (8 characters):</label>
+                <input type="password" id="password" name="password" minlength="8" required>
+                <div id="passwordError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <div id="nameError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="fatherName">Father's Name:</label>
+                <input type="text" id="fatherName" name="fatherName" required>
+                <div id="fatherNameError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="caste">Caste:</label>
+                <input type="text" id="caste" name="caste" required>
+                <div id="casteError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="className">Class:</label>
+                <select id="className" name="className" required>
+                    <option value="">Select</option>
+                    <option value="-1">Nursery</option>
+                    <option value="0">KG</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required>
+                <div id="emailError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="permanentAddress">Permanent Address:</label>
+                <input type="text" id="permanentAddress" name="permanentAddress" required>
+            </div>
+
+            <div class="form-group">
+                <label for="temporaryAddress">Temporary Address:</label>
+                <input type="text" id="tempAddress" name="tempAddress" required>
+            </div>
+
+            <div class="form-group">
+                <label for="parentMobile">Parent's Mobile Number:</label>
+                <input type="text" id="parentMobileNum" name="parentMobileNum" maxlength="11" required>
+                <div id="parentMobileError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="currentDate">Current Date:</label>
+                <input type="date" id="currentDate" name="currentDate" required>
+            </div>
+
+            <button type="submit"><i class="fas fa-save"></i> Submit</button>
+        </form>
+    `;
+
+        document.getElementById("addStudentForm").addEventListener("submit", handleStudentFormSubmit);
+    }
+
+    async function handleStudentFormSubmit(event) {
+        event.preventDefault();
+        clearErrors();
+
+        const formData = new FormData(event.target);
+        const studentData = Object.fromEntries(formData.entries());
+        studentData.role = "USER";
+
+        let isValid = true;
+        isValid &= validateInput(studentData.rollNo, /^\d{4}$/, "rollNoError", "Roll number should be 4 digits.");
+        isValid &= validateInput(studentData.name, /^[a-zA-Z\s]+$/, "nameError", "Name should contain only characters.");
+        isValid &= validateInput(studentData.fatherName, /^[a-zA-Z\s]+$/, "fatherNameError", "Father's name should contain only characters.");
+        isValid &= validateInput(studentData.caste, /^[a-zA-Z\s]+$/, "casteError", "Caste should contain only characters.");
+        isValid &= validateInput(studentData.password, /.{8,}/, "passwordError", "Password must be at least 8 characters.");
+        isValid &= validateInput(studentData.parentMobileNum, /^\d{11}$/, "parentMobileError", "Parent's mobile should be 11 digits.");
+        isValid &= validateInput(studentData.username,/^[a-zA-Z][a-zA-Z0-9._]*@ahus\.edu\.pk$/, "usernameError","Username Should be like this ex: hola0101@ahus.edu.pk");
+        isValid &= validateInput(studentData.email,/^[a-zA-Z0-9._%+-]+@gmail\.com$/, "emailError","Email Should be like this ex: hola0101@gmail.com");
+
+        if (studentData.className ==="Nursery"){
+            studentData.className="-1";
+        }
+        else if(studentData.className==="KG"){
+            studentData.className="0";
+        }
+
+        if (isValid) {
+            try {
+                const response = await apiCall("/admin/createStudent", "POST", studentData);
+                displayMessage(response.message, "success");
+                clearForm("addStudentForm");
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        }
+    }
+
+    async function renderUpdateStudentForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Update Student</h1>
+        <form id="updateStudentForm" class="card">
+            <div class="form-group">
+                <label for="rollNo">Roll Number:</label>
+                <input type="text" id="rollNo" maxlength="4" name="rollNo" placeholder="Enter Roll Number" required>
+                <button type="button" id="fetchStudentBtn"><i class="fas fa-search"></i> Fetch Student</button>
+            </div>
+        </form>
+    `;
+
+        document.getElementById("fetchStudentBtn").addEventListener("click", async function () {
+            const rollNo = document.getElementById("rollNo").value.trim();
+            if (!/^\d{4}$/.test(rollNo)) {
+                displayMessage("Please enter a valid 4-digit Roll Number", "error");
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/admin/${rollNo}/getStudentById`, "GET");
+                const studentData = response.data;
+                renderStudentUpdateForm(studentData);
+                if (response.error === "Resource Not Found" && response.message) {
+                    renderStudentUpdateForm(response.message);
+                } else if (studentData) {
+                    renderStudentUpdateForm(studentData);
+                } else if (response.message) {
+                    renderStudentUpdateForm(response.message); // Handle other potential messages
+                } else {
+                    renderStudentUpdateForm("Error: Could not retrieve student details."); // Fallback message
+                }
+
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderStudentUpdateForm(studentData) {
+        const form = document.getElementById("updateStudentForm");
+        form.innerHTML = ''; // Clear any previous content
+
+        if (typeof studentData === 'string' && studentData.includes("Doesn't Exist")) {
+            // Render the specific "Doesn't Exist" error message
+            form.innerHTML = `
+            <div class="card" style="background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 24px; color: #ef4444;"></i>
+                    <p style="font-weight: 500; color: #b91c1c;">${studentData}</p>
+                </div>
+            </div>
+        `;
+        } else if (studentData && typeof studentData === 'object' && studentData.rollNo !== undefined) {
+            // Determine the class name for the select input
+            let classNameValue = studentData.className;
+            let selectedClassName;
+
+            if (classNameValue === "-1") {
+                selectedClassName = "Nursery";
+            } else if (classNameValue === "0") {
+                selectedClassName = "KG";
+            } else {
+                selectedClassName = String(classNameValue); // Convert number to string for comparison
+            }
+
+            // Render the update student form
+            form.innerHTML = `
+            <h2>Update Student Information</h2>
+            <input type="hidden" id="rollNo" name="rollNo" value="${studentData.rollNo}">
+
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="${studentData.username}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" value="${studentData.password}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="${studentData.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fatherName">Father's Name:</label>
+                <input type="text" id="fatherName" name="fatherName" value="${studentData.fatherName}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="caste">Caste:</label>
+                <input type="text" id="caste" name="caste" value="${studentData.caste}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="className">Class Name:</label>
+                <select id="className" name="className" required>
+                    ${["Nursery", "KG", "1", "2", "3", "4", "5", "6", "7", "8"].map(cls =>
+                `<option value="${cls}" ${selectedClassName === cls ? 'selected' : ''}>${cls}</option>`
+            ).join('')}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" value="${studentData.email}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="permanentAddress">Permanent Address:</label>
+                <input type="text" id="permanentAddress" name="permanentAddress" value="${studentData.permanentAddress}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="temporaryAddress">Temporary Address:</label>
+                <input type="text" id="tempAddress" name="tempAddress" value="${studentData.tempAddress}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="parentMobile">Parent Mobile Number:</label>
+                <input type="text" id="parentMobileNum" maxlength="11" name="parentMobileNum" value="${studentData.parentMobileNum}" required>
+            </div>
+
+            <button type="submit"><i class="fas fa-save"></i> Update Student</button>
+        `;
+
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+                const formData = new FormData(form);
+                const updatedData = Object.fromEntries(formData.entries());
+                if(updatedData.className ==="Nursery"){
+                    updatedData.className="-1";
+                }
+                else if(updatedData.className==="KG"){
+                    updatedData.className="0";
+                }
+
+                try {
+                    const response = await apiCall(`/admin/${updatedData.rollNo}/updateStudent`, "PUT", updatedData);
+                    displayMessage(response.message, "success");
+                    clearForm("updateStudentForm"); // Corrected the form ID
+                    renderUpdateStudentForm(); // Reset the form
+                } catch (error) {
+                    displayMessage(error.message, "error");
+                }
+            });
+        } else if (typeof studentData === 'string') {
+            // If it's a string but doesn't contain the specific "Doesn't Exist" phrase, display it with default styling
+            form.innerHTML = `
+            <div class="card" style="background-color: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-info-circle" style="font-size: 24px; color: #6b7280;"></i>
+                    <p style="font-weight: 500; color: #374151;">${studentData}</p>
+                </div>
+            </div>
+        `;
+        } else {
+            // Handle other unexpected data
+            form.innerHTML = `
+            <div class="card" style="background-color: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #6b7280;"></i>
+                    <p style="font-weight: 500; color: #374151;">Error: Unable to display student update form.</p>
+                </div>
+            </div>
+        `;
+        }
+    }
+
+    function renderDeleteStudentForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Delete Student</h1>
+        <form id="deleteStudentForm" class="card">
+            <div class="form-group">
+                <label for="rollNo">Roll Number:</label>
+                <input type="text" id="rollNo" name="rollNo" maxlength="4" placeholder="Enter Roll Number" required>
+                <button type="button" id="deleteStudentBtn"><i class="fas fa-trash-alt"></i> Delete Student</button>
+            </div>
+        </form>
+    `;
+
+        document.getElementById("deleteStudentBtn").addEventListener("click", async function () {
+            const rollNo = document.getElementById("rollNo").value.trim();
+            if (!/^\d{4}$/.test(rollNo)) {
+                displayMessage("Please enter a valid 4-digit Roll Number", "error");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete the student with Roll Number: ${rollNo}?`)) {
+                try {
+                    const response = await apiCall(`/admin/${rollNo}/deleteStudent`, "DELETE");
+                    displayMessage(response.message || "Student deleted successfully", "success");
+                    document.getElementById("rollNo").value = "";
+                } catch (error) {
+                    displayMessage(error.message, "error");
+                }
+            }
+        });
+    }
+
+    async function getSpecificStudent() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Get Specific Student</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="rollNumber">Enter Roll Number:</label>
+                <input type="text" id="rollNumber" placeholder="Roll Number (4 digits)" maxlength="4">
+                <button id="getStudentBtn"><i class="fas fa-search"></i> Get Student</button>
+            </div>
+            <div id="studentDetails" style="margin-top: 20px;"></div>
+        </div>
+    `;
+
+        document.getElementById("getStudentBtn").addEventListener("click", async () => {
+            const rollNum = document.getElementById("rollNumber").value.trim();
+            if (!/^\d{4}$/.test(rollNum)) {
+                displayMessage("Invalid roll number. Please enter a 4-digit numeric value.", "error");
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/admin/${rollNum}/getStudentById`, "GET");
+                const studentData = response.data;
+
+                if (response.error === "Resource Not Found" && response.message) {
+                    renderStudentDetails(response.message);
+                } else if (studentData) {
+                    renderStudentDetails(studentData);
+                } else if (response.message) {
+                    renderStudentDetails(response.message); // Handle other potential messages
+                } else {
+                    renderStudentDetails("Error: Could not retrieve student details."); // Fallback message
+                }
+
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderStudentDetails(studentData) {
+        const detailsDiv = document.getElementById("studentDetails");
+        detailsDiv.innerHTML = ''; // Clear any previous content
+
+        if (typeof studentData === 'string' && studentData.includes("Doesn't Exist")) {
+            // Render the error message with beautiful font if it's a string indicating no student
+            detailsDiv.innerHTML = `
+            <div class="card" style="background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 24px; color: #ef4444;"></i>
+                    <p style="font-weight: 500; color: #b91c1c;">${studentData}</p>
+                </div>
+            </div>
+        `;
+        } else if (studentData && typeof studentData === 'object' && studentData.rollNo !== undefined) {
+            // Determine the class name based on the numeric value
+            let classNameValue = studentData.className;
+            let selectedClassName;
+
+            if (classNameValue === -1) {
+                selectedClassName = "Nursery";
+            } else if (classNameValue === 0) {
+                selectedClassName = "KG";
+            } else {
+                selectedClassName = String(classNameValue); // Convert number to string for comparison
+            }
+
+            // Render the form if studentData is a valid student object
+            detailsDiv.innerHTML = `
+            <div class="card">
+                <h2>Student Details</h2>
+                <table>
+                    <tr>
+                        <th>Roll No</th>
+                        <td>${studentData.rollNo}</td>
+                    </tr>
+                    <tr>
+                        <th>Username</th>
+                        <td>${studentData.username}</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td>${studentData.name}</td>
+                    </tr>
+                    <tr>
+                        <th>Father's Name</th>
+                        <td>${studentData.fatherName}</td>
+                    </tr>
+                    <tr>
+                        <th>Caste</th>
+                        <td>${studentData.caste}</td>
+                    </tr>
+                    <tr>
+                        <th>Class</th>
+                        <td>${selectedClassName}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>${studentData.email}</td>
+                    </tr>
+                    <tr>
+                        <th>Permanent Address</th>
+                        <td>${studentData.permanentAddress}</td>
+                    </tr>
+                    <tr>
+                        <th>Temporary Address</th>
+                        <td>${studentData.tempAddress}</td>
+                    </tr>
+                    <tr>
+                        <th>Parent Mobile</th>
+                        <td>${studentData.parentMobileNum}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Admission</th>
+                        <td>${studentData.currentDate}</td>
+                    </tr>
+                </table>
+            </div>
+        `;
+        } else if (typeof studentData === 'string') {
+            // If it's a string but doesn't contain the specific "Doesn't Exist" phrase, display it with default styling
+            detailsDiv.innerHTML = `
+            <div class="card" style="background-color: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-info-circle" style="font-size: 24px; color: #6b7280;"></i>
+                    <p style="font-weight: 500; color: #374151;">${studentData}</p>
+                </div>
+            </div>
+        `;
+        } else {
+            // Handle other cases (e.g., unexpected data format)
+            detailsDiv.innerHTML = `
+            <div class="card" style="background-color: #f3f4f6; border-left: 4px solid #6b7280; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #6b7280;"></i>
+                    <p style="font-weight: 500; color: #374151;">Error: Unable to display student details.</p>
+                </div>
+            </div>
+        `;
+        }
+    }
+
+    // Faculty Management Functions
+    function renderAddFacultyForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Add Faculty</h1>
+        <form id="addFacultyForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password (8 characters):</label>
+                <input type="password" id="password" name="password" minlength="8" required>
+                <div id="passwordError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <div id="nameError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="fatherName">Father's Name:</label>
+                <input type="text" id="fatherName" name="fatherName" required>
+                <div id="fatherNameError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="caste">Caste:</label>
+                <input type="text" id="caste" name="caste" required>
+                <div id="casteError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="cnicNum">CNIC:</label>
+                <input type="text" id="cnicNum" name="cnicNum" maxlength="13" required>
+                <div id="cnicError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="recentDegree">Recent Degree:</label>
+                <input type="text" id="recentDegree" name="recentDegree" required>
+            </div>
+
+            <div class="form-group">
+                <label for="anyDisease">Any Disease:</label>
+                <input type="text" id="anyDisease" name="anyDisease" required>
+            </div>
+
+            <div class="form-group">
+                <label for="bloodGroup">Select Blood Group:</label>
+                <select id="bloodGroup" name="bloodGroup" required>
+                    <option value="">-- Select --</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="roles">Select Role:</label>
+                <select id="roles" name="roles" required>
+                    <option value="">-- Select --</option>
+                    <option value="MANAGER">Manager</option>
+                    <option value="TEACHER">Teacher</option>
+                    <option value="STAFF">Staff</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="permanentAddress">Permanent Address:</label>
+                <input type="text" id="permanentAddress" name="permanentAddress" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tempAddress">Temporary Address:</label>
+                <input type="text" id="tempAddress" name="tempAddress" required>
+            </div>
+
+            <div class="form-group">
+                <label for="mobileNum">Mobile Number:</label>
+                <input type="text" id="mobileNum" name="mobileNum" maxlength="11" required>
+                <div id="mobileError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="currentDate">Current Date:</label>
+                <input type="date" id="currentDate" name="currentDate" required>
+            </div>
+
+            <button type="submit"><i class="fas fa-save"></i> Submit</button>
+        </form>
+    `;
+
+        document.getElementById("addFacultyForm").addEventListener("submit", handleFacultyFormSubmit);
+    }
+
+    async function handleFacultyFormSubmit(event) {
+        event.preventDefault();
+        clearErrors();
+
+        const formData = new FormData(event.target);
+        const facultyData = Object.fromEntries(formData.entries());
+        if (facultyData.roles == "TEACHER") {
+            facultyData.roles = "EDITOR";
+        }
+
+        let isValid = true;
+        isValid &= validateInput(facultyData.name, /^[a-zA-Z\s]+$/, "nameError", "Name should contain only characters.");
+        isValid &= validateInput(facultyData.fatherName, /^[a-zA-Z\s]+$/, "fatherNameError", "Father's name should contain only characters.");
+        isValid &= validateInput(facultyData.caste, /^[a-zA-Z\s]+$/, "casteError", "Caste should contain only characters.");
+        isValid &= validateInput(facultyData.password, /.{8,}/, "passwordError", "Password must be at least 8 characters.");
+        isValid &= validateInput(facultyData.mobileNum, /^\d{11}$/, "mobileError", "Mobile number should be 11 digits.");
+        isValid &= validateInput(facultyData.cnicNum, /^\d{13}$/, "cnicError", "CNIC should be 13 digits.");
+
+        if (isValid) {
+            try {
+                const response = await apiCall("/admin/createFaculty", "POST", facultyData);
+                displayMessage(response.message, "success");
+                clearForm("addFacultyForm");
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        }
+    }
+
+    async function renderUpdateFacultyForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Update Faculty</h1>
+        <form id="updateFacultyForm" class="card">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+                <button type="button" id="fetchFacultyBtn"><i class="fas fa-search"></i> Fetch Faculty</button>
+            </div>
+        </form>
+    `;
+
+        document.getElementById("fetchFacultyBtn").addEventListener("click", async function () {
+            const username = document.getElementById("username").value.trim();
+            if (!username) {
+                displayMessage("Please enter a valid username", "error");
+                return;
+            }
+
+            try {
+                const facultyData = await apiCall(`/admin/${username}/getFacultyById`, "GET");
+                renderFacultyUpdateForm(facultyData.data);
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderFacultyUpdateForm(facultyData) {
+        const form = document.getElementById("updateFacultyForm");
+        form.innerHTML = `
+        <h2>Update Faculty Information</h2>
+        <input type="hidden" id="username" name="username" value="${facultyData.username}">
+
+        <div class="form-group">
+            <label for="password">Password (8 characters):</label>
+            <input type="password" id="password" name="password" value="${facultyData.password}" minlength="8" required>
+            <div id="passwordError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="${facultyData.name}" required>
+            <div id="nameError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="fatherName">Father's Name:</label>
+            <input type="text" id="fatherName" name="fatherName" value="${facultyData.fatherName}" required>
+            <div id="fatherNameError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="caste">Caste:</label>
+            <input type="text" id="caste" name="caste" value="${facultyData.caste}" required>
+            <div id="casteError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="cnicNum">CNIC:</label>
+            <input type="text" id="cnicNum" name="cnicNum" value="${facultyData.cnicNum}" required>
+            <div id="cnicError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="recentDegree">Recent Degree:</label>
+            <input type="text" id="recentDegree" name="recentDegree" value="${facultyData.recentDegree}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="anyDisease">Any Disease:</label>
+            <input type="text" id="anyDisease" name="anyDisease" value="${facultyData.anyDisease}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bloodGroup">Blood Group:</label>
+            <select id="bloodGroup" name="bloodGroup" required>
+                ${["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map(bloodGroup =>
+            `<option value="${bloodGroup}" ${facultyData.bloodGroup === bloodGroup ? 'selected' : ''}>${bloodGroup}</option>`
+        ).join('')}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="permanentAddress">Permanent Address:</label>
+            <input type="text" id="permanentAddress" name="permanentAddress" value="${facultyData.permanentAddress}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="temporaryAddress">Temporary Address:</label>
+            <input type="text" id="temporaryAddress" name="temporaryAddress" value="${facultyData.tempAddress}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mobileNum">Mobile Number:</label>
+            <input type="text" id="mobileNum" name="mobileNum" value="${facultyData.mobileNum}" maxlength="11" required>
+            <div id="mobileError" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="role">Select Role:</label>
+            <select id="roles" name="roles" required>
+                ${["MANAGER", "TEACHER", "STAFF"].map(role =>
+            `<option value="${role}" ${facultyData.role === role ? 'selected' : ''}>${role}</option>`
+        ).join('')}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="currentDate">Current Date:</label>
+            <input type="date" id="currentDate" name="currentDate" value="${facultyData.currentDate}" required>
+        </div>
+
+        <button type="submit"><i class="fas fa-save"></i> Update Faculty</button>
+    `;
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const updatedData = Object.fromEntries(formData.entries());
+            if (updatedData.roles == "TEACHER") {
+                updatedData.roles = "EDITOR";
+            }
+
+            try {
+                const response = await apiCall(`/admin/${updatedData.username}/updateFaculty`, "PUT", updatedData);
+                displayMessage(response.message, "success");
+                renderUpdateFacultyForm(); // Reset the form
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderDeleteFacultyForm() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Delete Faculty</h1>
+        <form id="deleteFacultyForm" class="card">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required>
+                <button type="button" id="deleteFacultyBtn"><i class="fas fa-trash-alt"></i> Delete Faculty</button>
+            </div>
+        </form>
+    `;
+
+        document.getElementById("deleteFacultyBtn").addEventListener("click", async function () {
+            const username = document.getElementById("username").value.trim();
+            if (!username) {
+                displayMessage("Please enter a valid username", "error");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete the Faculty with Username: ${username}?`)) {
+                try {
+                    const response = await apiCall(`/admin/${username}/deleteFaculty`, "DELETE");
+                    displayMessage(response.message || "Faculty deleted successfully", "success");
+                    document.getElementById("username").value = "";
+                } catch (error) {
+                    displayMessage(error.message, "error");
+                }
+            }
+        });
+    }
+
+    async function getSpecificFaculty() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Get Specific Faculty</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+                <button id="getFacultyBtn"><i class="fas fa-search"></i> Get Faculty</button>
+            </div>
+            <div id="facultyDetails" style="margin-top: 20px;"></div>
+        </div>
+    `;
+
+        document.getElementById("getFacultyBtn").addEventListener("click", async () => {
+            const username = document.getElementById("username").value.trim();
+            if (!username) {
+                displayMessage("Please enter a valid username", "error");
+                return;
+            }
+
+            try {
+                const faculty = await apiCall(`/admin/${username}/getFacultyById`, "GET");
+                renderFacultyDetails(faculty.data);
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderFacultyDetails(faculty) {
+        const detailsDiv = document.getElementById("facultyDetails");
+        detailsDiv.innerHTML = `
+        <div class="card">
+            <h2>Faculty Details</h2>
+            <table>
+                <tbody>
+                    <tr><th>Username</th><td>${faculty.username}</td></tr>
+                    <tr><th>Name</th><td>${faculty.name}</td></tr>
+                    <tr><th>Father Name</th><td>${faculty.fatherName}</td></tr>
+                    <tr><th>Caste</th><td>${faculty.caste}</td></tr>
+                    <tr><th>CNIC</th><td>${faculty.cnicNum}</td></tr>
+                    <tr><th>Recent Degree</th><td>${faculty.recentDegree}</td></tr>
+                    <tr><th>Any Disease</th><td>${faculty.anyDisease}</td></tr>
+                    <tr><th>Blood Group</th><td>${faculty.bloodGroup}</td></tr>
+                    <tr><th>Permanent Address</th><td>${faculty.permanentAddress}</td></tr>
+                    <tr><th>Temporary Address</th><td>${faculty.tempAddress}</td></tr>
+                    <tr><th>Mobile Number</th><td>${faculty.mobileNum}</td></tr>
+                    <tr><th>Date</th><td>${faculty.currentDate}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+    }
+
+    // Attendance Management Functions
+    function renderGetSpecificAttendance() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Get Student Attendance</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="rollNumberInput">Enter Roll Number:</label>
+                <input type="text" id="rollNumberInput" placeholder="Enter Roll Number" maxlength="4">
+                <button id="fetchAttendanceBtn"><i class="fas fa-search"></i> Fetch Attendance</button>
+            </div>
+            <div id="attendanceResult" style="margin-top: 20px;"></div>
+        </div>
+    `;
+
+        document.getElementById("fetchAttendanceBtn").addEventListener("click", async function() {
+            const rollNo = document.getElementById("rollNumberInput").value.trim();
+            if (!/^\d{4}$/.test(rollNo)) {
+                displayMessage("Please enter a valid 4-digit Roll Number", "error");
+                return;
+            }
+
+            try {
+                const presentDays = await apiCall(`/admin/${rollNo}/getAttendenceOfStudent`, "GET");
+                const totalSchoolDays = 185;
+                const attendancePercentage = ((presentDays / totalSchoolDays) * 100).toFixed(2);
+
+                let statusColor, statusText;
+                if (attendancePercentage >= 90) {
+                    statusColor = "#10b981";
+                    statusText = "Excellent";
+                } else if (attendancePercentage >= 75) {
+                    statusColor = "#3b82f6";
+                    statusText = "Good";
+                } else if (attendancePercentage >= 60) {
+                    statusColor = "#f59e0b";
+                    statusText = "Average";
+                } else {
+                    statusColor = "#ef4444";
+                    statusText = "Poor";
+                }
+
+                document.getElementById("attendanceResult").innerHTML = `
+                <div class="card">
+                    <h2>Attendance Summary</h2>
+                    <div style="display: flex; justify-content: space-around; align-items: center; margin: 30px 0;">
+                        <div style="position: relative; width: 150px; height: 150px;">
+                            <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#e2e8f0"
+                                    stroke-width="3"
+                                    stroke-dasharray="100, 100"
+                                />
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="${statusColor}"
+                                    stroke-width="3"
+                                    stroke-dasharray="${attendancePercentage}, 100"
+                                />
+                                <text x="18" y="20.5" text-anchor="middle" style="font-size: 8px; font-weight: bold; fill: ${statusColor};">${attendancePercentage}%</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="margin-bottom: 15px;">
+                                <p style="font-size: 1rem; color: var(--gray); margin-bottom: 5px;">Roll Number</p>
+                                <p style="font-size: 1.5rem; font-weight: 600; color: var(--dark);">${rollNo}</p>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <p style="font-size: 1rem; color: var(--gray); margin-bottom: 5px;">Present Days</p>
+                                <p style="font-size: 1.5rem; font-weight: 600; color: var(--dark);">${presentDays} / ${totalSchoolDays}</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 1rem; color: var(--gray); margin-bottom: 5px;">Status</p>
+                                <p style="font-size: 1.5rem; font-weight: 600; color: ${statusColor};">${statusText}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function getLowAttendanceStudents() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Get Low Attendance Students</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="classNameInput">Enter Class Name:</label>
+                <input type="text" id="classNameInput" placeholder="e.g., 09" maxlength="2">
+                <button id="fetchLowAttendanceBtn"><i class="fas fa-search"></i> Fetch Low Attendance</button>
+            </div>
+            <div id="lowAttendanceResult" style="margin-top: 20px;"></div>
+        </div>
+    `;
+
+        document.getElementById("fetchLowAttendanceBtn").addEventListener("click", async function() {
+            const className = document.getElementById("classNameInput").value.trim();
+            if (!/^\d{2}$/.test(className)) {
+                displayMessage("Please enter a valid two-digit class name", "error");
+                return;
+            }
+
+            try {
+                const lowAttendanceData = await apiCall(`/admin/${className}/getRollNumHavingLowAttendence`, "GET");
+                renderLowAttendanceTable(lowAttendanceData);
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function renderLowAttendanceTable(data) {
+        const resultDiv = document.getElementById("lowAttendanceResult");
+        if (Object.keys(data).length === 0) {
+            resultDiv.innerHTML = `
+            <div class="card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-check-circle" style="font-size: 48px; color: var(--success); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px; color: var(--dark);">Good News!</h3>
+                <p>No students found with low attendance in this class.</p>
+            </div>`;
+            return;
+        }
+
+        const table = document.createElement("table");
+        table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Serial No.</th>
+                <th>Roll No.</th>
+                <th>Attendance</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${Object.entries(data).map(([rollNo, attendance], index) => {
+            const attendancePercentage = ((attendance / 185) * 100).toFixed(2);
+            let statusColor, statusText;
+
+            if (attendancePercentage < 60) {
+                statusColor = "#ef4444";
+                statusText = "Critical";
+            } else if (attendancePercentage < 75) {
+                statusColor = "#f59e0b";
+                statusText = "Warning";
+            } else {
+                statusColor = "#10b981";
+                statusText = "Good";
+            }
+
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${rollNo}</td>
+                    <td>${attendance} / 185 (${attendancePercentage}%)</td>
+                    <td><span style="padding: 5px 10px; background-color: ${statusColor}; color: white; border-radius: 20px; font-size: 0.8rem;">${statusText}</span></td>
+                </tr>
+            `}).join('')}
+        </tbody>
+    `;
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(table);
+    }
+
+    function renderGetSpecificFee() {
+        const contentSpace = document.getElementById("contentSpace");
+
+        contentSpace.innerHTML = `
+        <h1>Get Student Fee Details</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="rollNumberInput">Enter Roll Number:</label>
+                <input type="text" id="rollNumberInput" placeholder="Enter Roll Number" maxlength="4" required>
+                <button id="fetchFeesBtn"><i class="fas fa-search"></i> Fetch Fee Details</button>
+            </div>
+            <div id="feeDetails"></div>
+        </div>
+    `;
+
+        document.getElementById("fetchFeesBtn").addEventListener("click", () => {
+            const rollNo = document.getElementById("rollNumberInput").value.trim();
+            if (rollNo === "") {
+                displayMessage("Please enter a valid roll number.", "error");
+                return;
+            }
+            renderFeeTable(rollNo);
+        });
+    }
+
+    function renderFeeTable(rollNo) {
+        const feeDetailsDiv = document.getElementById("feeDetails");
+        if (!feeDetailsDiv) {
+            console.error("feeDetails div not found in the DOM.");
+            return;
+        }
+
+        // Show loading state
+        feeDetailsDiv.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+            <p>Loading fee details...</p>
+        </div>
+        `;
+
+        let currentPage = 0;
+        const pageSize = 10;
+
+        async function fetchAndRenderPage(page) {
+            const token = sessionStorage.getItem("jwtToken");
+            if (!token) {
+                feeDetailsDiv.innerHTML = `
+                <div class="card" style="text-align: center; padding: 30px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 20px;"></i>
+                    <p>JWT token missing. Please log in again.</p>
+                </div>`;
+                return;
+            }
+
+            const apiEndpoint = `/admin/${rollNo}/getFeeDetails?pageNumber=${currentPage+1}&pageSize=${pageSize}`;
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    feeDetailsDiv.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 20px;"></i>
+                        <p>Server error: ${response.status} - ${response.statusText}</p>
+                    </div>`;
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data || !Array.isArray(data.content)) {
+                    feeDetailsDiv.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
+                        <p>${data.message || "No data available"}</p>
+                    </div>`;
+                    return;
+                }
+
+                renderFeeDetails(data);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                feeDetailsDiv.innerHTML = `
+                <div class="card" style="text-align: center; padding: 30px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger); margin-bottom: 20px;"></i>
+                    <p>Error fetching data: ${error.message}</p>
+                </div>`;
+            }
+        }
+
+        function renderFeeDetails(data) {
+            const rows = data.content;
+
+            if (!rows || rows.length === 0) {
+                feeDetailsDiv.innerHTML = `
+                <div class="card" style="text-align: center; padding: 30px;">
+                    <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
+                    <p>No fee records found for this student.</p>
+                </div>`;
+                return;
+            }
+
+            // Calculate total fees
+            let totalMonthlyFee = 0;
+            let totalExamFee = 0;
+
+            rows.forEach(row => {
+                totalMonthlyFee += parseFloat(row.monthlyFee) || 0;
+                totalExamFee += parseFloat(row.examFee) || 0;
+            });
+
+            feeDetailsDiv.innerHTML = `
+            <div class="card">
+                <h2>Fee Summary for Roll No: ${rollNo}</h2>
+                <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                    <div style="text-align: center; padding: 15px; background: rgba(79, 70, 229, 0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); margin-bottom: 5px;">Total Monthly Fee</p>
+                        <p style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">${totalMonthlyFee.toFixed(2)}</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: rgba(6, 182, 212, 0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); margin-bottom: 5px;">Total Exam Fee</p>
+                        <p style="font-size: 1.5rem; font-weight: 600; color: var(--secondary);">${totalExamFee.toFixed(2)}</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); margin-bottom: 5px;">Total Paid</p>
+                        <p style="font-size: 1.5rem; font-weight: 600; color: var(--success);">${(totalMonthlyFee + totalExamFee).toFixed(2)}</p>
+                    </div>
+                </div>
+
+                <table id="feeTable">
+                    <thead>
+                        <tr>
+                            <th>Monthly Fee</th>
+                            <th>Exam Fee</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feeTableBody">
+                        ${rows.map(row => `
+                            <tr>
+                                <td>${row.monthlyFee}</td>
+                                <td>${row.examFee}</td>
+                                <td>${formatDate(row.date)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button id="prevBtn" ${data.first ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Previous</button>
+                    <span id="pageInfo">Page ${data.pageable.pageNumber + 1} of ${data.totalPages}</span>
+                    <button id="nextBtn" ${data.last ? 'disabled' : ''}><i class="fas fa-chevron-right"></i> Next</button>
+                </div>
+            </div>`;
+
+            // Add event listeners to pagination buttons
+            document.getElementById("prevBtn").addEventListener("click", () => {
+                if (currentPage > 0) {
+                    currentPage--;
+                    fetchAndRenderPage(currentPage);
+                }
+            });
+
+            document.getElementById("nextBtn").addEventListener("click", () => {
+                if (!data.last) {
+                    currentPage++;
+                    fetchAndRenderPage(currentPage);
+                }
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Initial fetch
+        fetchAndRenderPage(currentPage);
+    }
+
+    function setupSendMessageUI() {
+        const contentSpace = document.getElementById("contentSpace");
+        contentSpace.innerHTML = `
+        <h1>Send Message to Student</h1>
+        <div class="card">
+            <div class="form-group">
+                <label for="rollNumber">Enter Roll Number:</label>
+                <input type="text" id="rollNumber" placeholder="Roll Number (4 digits)" maxlength="4">
+                <button id="getStudentBtn"><i class="fas fa-search"></i> Get Student</button>
+            </div>
+            <div id="studentDetails"></div>
+        </div>
+    `;
+
+        document.getElementById("getStudentBtn").addEventListener("click", async () => {
+            const rollNum = document.getElementById("rollNumber").value.trim();
+            if (!/^\d{4}$/.test(rollNum)) {
+                displayMessage("Invalid roll number. Please enter a 4-digit numeric value.", "error");
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/admin/${rollNum}/getStudentById`, "GET");
+                const studentData = await response.data;
+
+                if (response.error === "Resource Not Found" && response.message) {
+                    displayMessage(response.message, "error");
+                } else if (studentData) {
+                    showMessageInput(studentData.rollNo, studentData.email); // Dynamic message input
+                } else {
+                    displayMessage("Error: Could not retrieve student details.", "error"); // Fallback message
+                }
+
+            } catch (error) {
+                displayMessage(error.message, "error");
+            }
+        });
+    }
+
+    function showMessageInput(rollNo, email) {
+        const container = document.getElementById("contentSpace");
+
+        // Create the message area dynamically
+        const messageArea = document.createElement("div");
+        messageArea.classList.add("message-area");
+
+        // Student info card
+        const studentInfo = document.createElement("div");
+        studentInfo.className = "card";
+        studentInfo.style.marginBottom = "20px";
+        studentInfo.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-user-graduate" style="font-size: 20px;"></i>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 5px;">Student Information</h3>
+                    <p><strong>Roll No:</strong> ${rollNo}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                </div>
+            </div>
+        `;
+
+        // Message box container
+        const messageBoxContainer = document.createElement("div");
+        messageBoxContainer.className = "card";
+
+        // Create the message box (textarea)
+        const messageBox = document.createElement("textarea");
+        messageBox.id = "messageContent";
+        messageBox.placeholder = "Write your message here...";
+        messageBox.className = "message-box";
+
+        // Create Send button
+        const sendBtn = document.createElement("button");
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+        sendBtn.className = "send-button";
+        sendBtn.onclick = () => sendMessageToStudent(rollNo);
+
+        // Append elements
+        messageBoxContainer.appendChild(document.createElement("h3").appendChild(document.createTextNode("Compose Message")));
+        messageBoxContainer.appendChild(messageBox);
+        messageBoxContainer.appendChild(sendBtn);
+
+        // Clear previous message area if exists
+        const existingMessageArea = container.querySelector(".message-area");
+        if (existingMessageArea) {
+            existingMessageArea.remove();
+        }
+
+        // Append to container
+        container.appendChild(studentInfo);
+        container.appendChild(messageBoxContainer);
+    }
+
+    async function sendMessageToStudent(rollNo) {
+        const msg = document.getElementById("messageContent").value.trim();
+
+        if (!msg) {
+            displayMessage("Message cannot be empty.", "info");
+            return;
+        }
+
+        try {
+            const response = await apiCall("/admin/sendMessage", "POST", { rollNo, msg });
+            const res = await response.text()
+            displayMessage(res, "success");
+            document.getElementById("messageContent").value = "";
+        } catch (err) {
+            displayMessage("Failed to send message: " + err.message, "error");
+        }
+    }
+
+    // Logout functionality
+    function logout() {
+        sessionStorage.removeItem("jwtToken");
+        displayMessage("Logged out successfully", "success");
+        // Redirect to login page
+        setTimeout(() => {
+            window.location.href = "/index.html";
+        }, 1500);
+    }
+
+    // Close modal when clicking on X
+    document.querySelector(".close").addEventListener("click", function() {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener("click", function(event) {
+        if (event.target === document.getElementById("modal")) {
+            document.getElementById("modal").style.display = "none";
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropbtns = document.querySelectorAll('.sidebar .dropbtn');
+
+        dropbtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdown = this.parentElement;
+                const dropdownContent = dropdown.querySelector('.dropdown-content');
+
+                // Toggle the display
+                if (dropdownContent.style.display === 'block') {
+                    dropdownContent.style.display = 'none';
+                } else {
+                    // Close all other dropdowns first
+                    document.querySelectorAll('.sidebar .dropdown-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    dropdownContent.style.display = 'block';
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.sidebar')) {
+                document.querySelectorAll('.sidebar .dropdown-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
