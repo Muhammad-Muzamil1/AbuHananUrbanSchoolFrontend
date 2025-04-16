@@ -2273,7 +2273,7 @@
                 return;
             }
 
-            const apiEndpoint = `/admin/${rollNo}/getFeeDetails?pageNumber=${page+1}&pageSize=${pageSize}`;
+            const apiEndpoint = `https://abuhananurbanschool.up.railway.app/admin/${rollNo}/getFeeDetails?pageNumber=${page+1}&pageSize=${pageSize}`;
 
             try {
                 const response = await fetch(apiEndpoint, {
