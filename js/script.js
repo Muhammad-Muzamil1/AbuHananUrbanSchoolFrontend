@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Login function to authenticate and get JWT token
             try {
-                const response = await fetch('/jwt/authenticate', {
+                const response = await fetch('https://abuhananurbanschool.up.railway.app/jwt/authenticate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

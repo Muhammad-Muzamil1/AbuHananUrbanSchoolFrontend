@@ -404,68 +404,6 @@
             gap: 5px;
         }
 
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 600;
-            padding: 10px;
-            color: var(--dark);
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .calendar-day:hover {
-            background-color: rgba(79, 70, 229, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .calendar-day.present {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .calendar-day.present::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: var(--success);
-        }
-
-        .calendar-day.absent {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .calendar-day.absent::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: var(--danger);
-        }
-
-        .calendar-day.today {
-            background-color: rgba(79, 70, 229, 0.2);
-            font-weight: 700;
-        }
-
-        .calendar-day.other-month {
-            color: var(--gray-light);
-        }
-
         .attendance-summary {
             display: flex;
             justify-content: space-around;
@@ -1169,6 +1107,8 @@
             fetchAttendance();
         } else if (tabId === 'fees') {
             fetchFees();
+        }else if(tabId === 'notification'){
+            updates();
         }
 
         // Close mobile menu if open
@@ -1191,7 +1131,7 @@
         }
 
         try {
-            const response = await fetch("/student/getStudent", {
+            const response = await fetch("https://abuhananurbanschool.up.railway.app/student/getStudent", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -1245,6 +1185,38 @@
             const notifyElement = document.getElementById("notify");
             notifyElement.textContent = data.expirableMessage || "No latest updates";
         }
+    }
+
+    async function updates() {
+        // 🔔 Fetch notification when 'notification' tab is opened
+        const token = sessionStorage.getItem("jwtToken");
+
+        if (!token) {
+            showNotification("Authentication required", "error");
+            return;
+        }
+
+        try {
+            // Fetch overall attendance
+            const response = await fetch("https://abuhananurbanschool.up.railway.app/student/getUpdates", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch attendance data");
+            }
+
+                const data = await response.json(); // Assuming response is JSON
+                const notifyElement = document.getElementById("notify");
+                notifyElement.textContent = data.message;
+            } catch (error) {
+                console.error("Error fetching updates:", error);
+                const notifyElement = document.getElementById("notify");
+                notifyElement.textContent = "Error loading updates.";
+            }
     }
 
     // Fetch attendance data
@@ -1311,7 +1283,7 @@
         `;
 
         try {
-            const response = await fetch(`/student/getFeeDetails?pageNumber=${currentPage + 1}&pageSize=${pageSize}`, {
+            const response = await fetch(`https://abuhananurbanschool.up.railway.app/student/getFeeDetails?pageNumber=${currentPage + 1}&pageSize=${pageSize}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,

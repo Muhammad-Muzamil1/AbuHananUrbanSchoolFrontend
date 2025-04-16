@@ -1336,7 +1336,7 @@
 
         if (isValid) {
             try {
-                const response = await apiCall("/admin/createStudent", "POST", studentData);
+                const response = await apiCall("https://abuhananurbanschool.up.railway.app/admin/createStudent", "POST", studentData);
                 displayMessage(response.message, "success");
                 clearForm("addStudentForm");
             } catch (error) {
@@ -1366,7 +1366,7 @@
             }
 
             try {
-                const response = await apiCall(`/admin/${rollNo}/getStudentById`, "GET");
+                const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${rollNo}/getStudentById`, "GET");
                 const studentData = response.data;
                 renderStudentUpdateForm(studentData);
                 if (response.error === "Resource Not Found" && response.message) {
@@ -1486,7 +1486,7 @@
                 }
 
                 try {
-                    const response = await apiCall(`/admin/${updatedData.rollNo}/updateStudent`, "PUT", updatedData);
+                    const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${updatedData.rollNo}/updateStudent`, "PUT", updatedData);
                     displayMessage(response.message, "success");
                     clearForm("updateStudentForm"); // Corrected the form ID
                     renderUpdateStudentForm(); // Reset the form
@@ -1539,7 +1539,7 @@
 
             if (confirm(`Are you sure you want to delete the student with Roll Number: ${rollNo}?`)) {
                 try {
-                    const response = await apiCall(`/admin/${rollNo}/deleteStudent`, "DELETE");
+                    const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${rollNo}/deleteStudent`, "DELETE");
                     displayMessage(response.message || "Student deleted successfully", "success");
                     document.getElementById("rollNo").value = "";
                 } catch (error) {
@@ -1571,7 +1571,7 @@
             }
 
             try {
-                const response = await apiCall(`/admin/${rollNum}/getStudentById`, "GET");
+                const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${rollNum}/getStudentById`, "GET");
                 const studentData = response.data;
 
                 if (response.error === "Resource Not Found" && response.message) {
@@ -1816,7 +1816,7 @@
 
         if (isValid) {
             try {
-                const response = await apiCall("/admin/createFaculty", "POST", facultyData);
+                const response = await apiCall("https://abuhananurbanschool.up.railway.app/admin/createFaculty", "POST", facultyData);
                 displayMessage(response.message, "success");
                 clearForm("addFacultyForm");
             } catch (error) {
@@ -1846,7 +1846,7 @@
             }
 
             try {
-                const facultyData = await apiCall(`/admin/${username}/getFacultyById`, "GET");
+                const facultyData = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${username}/getFacultyById`, "GET");
                 renderFacultyUpdateForm(facultyData.data);
             } catch (error) {
                 displayMessage(error.message, "error");
@@ -1951,7 +1951,7 @@
             }
 
             try {
-                const response = await apiCall(`/admin/${updatedData.username}/updateFaculty`, "PUT", updatedData);
+                const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${updatedData.username}/updateFaculty`, "PUT", updatedData);
                 displayMessage(response.message, "success");
                 renderUpdateFacultyForm(); // Reset the form
             } catch (error) {
@@ -1982,7 +1982,7 @@
 
             if (confirm(`Are you sure you want to delete the Faculty with Username: ${username}?`)) {
                 try {
-                    const response = await apiCall(`/admin/${username}/deleteFaculty`, "DELETE");
+                    const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${username}/deleteFaculty`, "DELETE");
                     displayMessage(response.message || "Faculty deleted successfully", "success");
                     document.getElementById("username").value = "";
                 } catch (error) {
@@ -2014,7 +2014,7 @@
             }
 
             try {
-                const faculty = await apiCall(`/admin/${username}/getFacultyById`, "GET");
+                const faculty = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${username}/getFacultyById`, "GET");
                 renderFacultyDetails(faculty.data);
             } catch (error) {
                 displayMessage(error.message, "error");
@@ -2070,7 +2070,7 @@
             }
 
             try {
-                const presentDays = await apiCall(`/admin/${rollNo}/getAttendenceOfStudent`, "GET");
+                const presentDays = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${rollNo}/getAttendenceOfStudent`, "GET");
                 const totalSchoolDays = 185;
                 const attendancePercentage = ((presentDays / totalSchoolDays) * 100).toFixed(2);
 
@@ -2159,7 +2159,7 @@
             }
 
             try {
-                const lowAttendanceData = await apiCall(`/admin/${className}/getRollNumHavingLowAttendence`, "GET");
+                const lowAttendanceData = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${className}/getRollNumHavingLowAttendence`, "GET");
                 renderLowAttendanceTable(lowAttendanceData);
             } catch (error) {
                 displayMessage(error.message, "error");
@@ -2273,7 +2273,7 @@
                 return;
             }
 
-            const apiEndpoint = `/admin/${rollNo}/getFeeDetails?pageNumber=${currentPage+1}&pageSize=${pageSize}`;
+            const apiEndpoint = `/admin/${rollNo}/getFeeDetails?pageNumber=${page+1}&pageSize=${pageSize}`;
 
             try {
                 const response = await fetch(apiEndpoint, {
@@ -2295,16 +2295,17 @@
 
                 const data = await response.json();
 
-                if (!data || !Array.isArray(data.content)) {
+                if (!data || !data.data || !Array.isArray(data.data.content)) {
                     feeDetailsDiv.innerHTML = `
-                    <div class="card" style="text-align: center; padding: 30px;">
-                        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
-                        <p>${data.message || "No data available"}</p>
-                    </div>`;
+    <div class="card" style="text-align: center; padding: 30px;">
+        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
+        <p>${data.message || "No data available"}</p>
+    </div>`;
                     return;
                 }
 
-                renderFeeDetails(data);
+                renderFeeDetails(data.data); // 👈 Pass only the actual data object
+
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -2321,10 +2322,10 @@
 
             if (!rows || rows.length === 0) {
                 feeDetailsDiv.innerHTML = `
-                <div class="card" style="text-align: center; padding: 30px;">
-                    <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
-                    <p>No fee records found for this student.</p>
-                </div>`;
+        <div class="card" style="text-align: center; padding: 30px;">
+            <i class="fas fa-info-circle" style="font-size: 48px; color: var(--info); margin-bottom: 20px;"></i>
+            <p>No fee records found for this student.</p>
+        </div>`;
                 return;
             }
 
@@ -2432,7 +2433,7 @@
             }
 
             try {
-                const response = await apiCall(`/admin/${rollNum}/getStudentById`, "GET");
+                const response = await apiCall(`https://abuhananurbanschool.up.railway.app/admin/${rollNum}/getStudentById`, "GET");
                 const studentData = await response.data;
 
                 if (response.error === "Resource Not Found" && response.message) {
@@ -2514,7 +2515,7 @@
         }
 
         try {
-            const response = await apiCall("/admin/sendMessage", "POST", { rollNo, msg });
+            const response = await apiCall("https://abuhananurbanschool.up.railway.app/admin/sendMessage", "POST", { rollNo, msg });
             const res = await response.text()
             displayMessage(res, "success");
             document.getElementById("messageContent").value = "";

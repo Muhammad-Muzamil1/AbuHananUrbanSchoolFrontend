@@ -809,7 +809,7 @@
             const rollNo = document.getElementById("rollNo").value;
 
             try {
-                const res = await fetch(`/manager/${rollNo}/getStudentById`, {
+                const res = await fetch(`https://abuhananurbanschool.up.railway.app/manager/${rollNo}/getStudentById`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -865,7 +865,7 @@
                     payload.className = className;
 
                     try {
-                        const payRes = await fetch("/manager/payStudentFees", {
+                        const payRes = await fetch("https://abuhananurbanschool.up.railway.app/manager/payStudentFees", {
                             method: "POST",
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -912,7 +912,7 @@
             const rollNo = document.getElementById("rollNo").value;
 
             try {
-                const res = await fetch(`/manager/${rollNo}/getStudentById`, {
+                const res = await fetch(`https://abuhananurbanschool.up.railway.app/manager/${rollNo}/getStudentById`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -938,7 +938,7 @@
         resultDiv.innerHTML = `<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i></div>`;
 
         try {
-            const res = await fetch(`/manager/${rollNo}/getFeeDetails?pageNumber=${pageNumber+1}&pageSize=${pageSize}`, {
+            const res = await fetch(`https://abuhananurbanschool.up.railway.app/manager/${rollNo}/getFeeDetails?pageNumber=${pageNumber+1}&pageSize=${pageSize}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
